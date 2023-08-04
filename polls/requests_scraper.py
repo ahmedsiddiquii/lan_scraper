@@ -40,6 +40,23 @@ def scrape_google_maps(content_type, number_of_results):
         # Process the cards as needed
         print(c.get_attribute("href"))
         driver.get(c)
+        name=driver.find_element(by="xpath",value='//h1[@class="DUwDvf lfPIob"]').text
+        desc=driver.find_element(by="xpath",value='//div[@class="PYvSYb "]').text
+        location=driver.find_element(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]').text
+        contact=driver.find_elements(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
+        for i in contact:
+            phone=(i[5]).text
+        web=driver.find_elements(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
+        for i in web:
+            website=(i[4]).text
+        reviews=driver.find_elements(by="xpath",value='//div[@class="fontDisplayLarge"]').text
+        print(name)
+        print(desc)
+        print(location)
+        print(contact)
+        print(phone)
+        print(website)
+        print(reviews)
 
     # Don't forget to close the driver when you're done
     driver.quit()
