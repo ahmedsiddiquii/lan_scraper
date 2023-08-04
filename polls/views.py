@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .scrapper import scrape_data_from_google_maps
 from .google_scrape import scrpe
-
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -47,3 +47,25 @@ def get_data(request):
         return Response({'data': serializer.data})
 
     return Response({'status': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_data(request):
+    try:
+        longitude = request.data.get('longitude')
+        latitude = request.data.get('latitude')
+        query_type = request.data.get('type')
+
+        # Check if any record with same latitude, longitude, or type exists
+        matching_queries = Queries.objects.filter(
+            Q(longitude=longitude) | Q(latitude=latitude) | Q(type=query_type)
+        )
+
+        if matching_queries.exists():
+            # Remove the data that matches the criteria
+            matching_queries.delete()
+            return Response({'status': 'Data removed successfully!'})
+        else:
+            return Response({'status': 'No matching data found'}, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        return Response({'status': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
