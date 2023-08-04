@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys # Import the Keys class
+from selenium.webdriver.common.keys import Keys
 import undetected_chromedriver as uc
 import time
 
@@ -13,8 +13,13 @@ def scrape_google_maps(content_type, number_of_results):
     # Construct the URL for Google Maps search
     url = f"https://www.google.com/maps/search/{content_type}/@{latitude},{longitude},13z/data=!3m1!4b1?entry=ttu"
 
+    # Chrome options
+    chrome_options = uc.ChromeOptions()
+    chrome_options.add_argument("--headless") # Run in headless mode
+    chrome_options.add_argument("user-agent=Your-Custom-User-Agent") # Set custom user agent
+
     # Start a Selenium web driver
-    driver = uc.Chrome()
+    driver = uc.Chrome(options=chrome_options)
 
     # Navigate to the URL
     driver.get(url)
@@ -32,28 +37,28 @@ def scrape_google_maps(content_type, number_of_results):
     while len(cards) < number_of_results:
         # Perform a scroll down action
         actions.move_to_element(scrollable_element).send_keys(Keys.PAGE_DOWN).perform()
-        time.sleep(1) # Allow some time for new cards to load
+        time.sleep(0.5) # Reduced sleep time
         cards = driver.find_elements(By.XPATH, "//a[@class='hfpxzc']")
 
     print(len(cards))
-    for c in cards[:number_of_results]:
-        # Process the cards as needed
-        a=c.get_attribute("href")
-        driver.get(a)
-        time.sleep(5)
-        name=driver.find_element(by="xpath",value='//h1[@class="DUwDvf lfPIob"]').text
+    links=[]
+    for link in cards[:number_of_results]:
+        links.append(link.get_attribute("href"))
+    for link in links:
+
+        driver.get(link)
+        time.sleep(2) # Reduced sleep time
+        name = driver.find_element(by="xpath", value='//h1[@class="DUwDvf lfPIob"]').text
         print(name)
         try:
-            desc=driver.find_element(by="xpath",value='//div[@class="PYvSYb "]').text
+            desc = driver.find_element(by="xpath", value='//div[@class="PYvSYb "]').text
             print(desc)
         except:
             pass
-        location=driver.find_element(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]').text
+        location = driver.find_element(by="xpath", value='//div[@class="Io6YTe fontBodyMedium kR99db "]').text
         contacts = driver.find_elements(by="xpath", value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
-        phone_numbers = []
-        for contact in contacts:
-            phone_numbers.append(contact.text)
-        reviews=driver.find_element(by="xpath",value='//div[@class="fontDisplayLarge"]').text
+        phone_numbers = [contact.text for contact in contacts]
+        reviews = driver.find_element(by="xpath", value='//div[@class="fontDisplayLarge"]').text
         print(location)
         print(phone_numbers[5])
         print(phone_numbers[4])
