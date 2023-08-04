@@ -20,17 +20,43 @@ class GoogleDataSerializer(serializers.ModelSerializer):
 @api_view(['POST'])
 def save_data(request):
     if request.method == 'POST':
-        query = Queries(
-            longitude=request.data['longitude'],
-            latitude=request.data['latitude'],
-            number_of_data=request.data['number_of_data'],
-            type=request.data['type'],
-            status="pending")
-        query.save()
-        return Response({'status': 'Data saved successfully!'})
+        longitude = request.data.get('longitude')
+        latitude = request.data.get('latitude')
+        query_type = request.data.get('type')
+
+        # Check if data is exists
+        existing_query = Queries.objects.filter(
+            longitude=longitude,
+            latitude=latitude,
+            type=query_type
+        ).first()
+
+        if existing_query:
+            # Data already exists
+            response_data = {
+                'status': 'Data already saved!',
+                'longitude': existing_query.longitude,
+                'latitude': existing_query.latitude,
+                'number_of_data': existing_query.number_of_data,
+                'type': existing_query.type,
+                'status': existing_query.status
+            }
+        else:
+            #  save the new data
+            query = Queries(
+                longitude=longitude,
+                latitude=latitude,
+                number_of_data=request.data['number_of_data'],
+                type=query_type,
+                status="pending"
+            )
+            query.save()
+
+            response_data = {'status': 'Data saved successfully!'}
+
+        return Response(response_data)
 
     return Response({'status': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['GET'])
 def get_data(request):
     if request.method == 'GET':
