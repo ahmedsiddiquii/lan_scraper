@@ -38,24 +38,25 @@ def scrape_google_maps(content_type, number_of_results):
     print(len(cards))
     for c in cards[:number_of_results]:
         # Process the cards as needed
-        print(c.get_attribute("href"))
-        driver.get(c)
+        a=c.get_attribute("href")
+        driver.get(a)
+        time.sleep(5)
         name=driver.find_element(by="xpath",value='//h1[@class="DUwDvf lfPIob"]').text
-        desc=driver.find_element(by="xpath",value='//div[@class="PYvSYb "]').text
-        location=driver.find_element(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]').text
-        contact=driver.find_elements(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
-        for i in contact:
-            phone=(i[5]).text
-        web=driver.find_elements(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
-        for i in web:
-            website=(i[4]).text
-        reviews=driver.find_elements(by="xpath",value='//div[@class="fontDisplayLarge"]').text
         print(name)
-        print(desc)
+        try:
+            desc=driver.find_element(by="xpath",value='//div[@class="PYvSYb "]').text
+            print(desc)
+        except:
+            pass
+        location=driver.find_element(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]').text
+        contacts = driver.find_elements(by="xpath", value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
+        phone_numbers = []
+        for contact in contacts:
+            phone_numbers.append(contact.text)
+        reviews=driver.find_element(by="xpath",value='//div[@class="fontDisplayLarge"]').text
         print(location)
-        print(contact)
-        print(phone)
-        print(website)
+        print(phone_numbers[5])
+        print(phone_numbers[4])
         print(reviews)
 
     # Don't forget to close the driver when you're done
