@@ -8,6 +8,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Queries, Google_data
+from .requests_scraper import *
+import threading
 
 from rest_framework import serializers
 from .models import Google_data
@@ -41,6 +43,9 @@ def save_data(request):
                 'type': existing_query.type,
                 'status': existing_query.status
             }
+            response_data = {'status': 'Already Exist!'}
+
+            return Response(response_data)
         else:
             #  save the new data
             query = Queries(
@@ -51,8 +56,15 @@ def save_data(request):
                 status="pending"
             )
             query.save()
+            longitude = longitude
+            latitude = latitude
+            content_type = query_type
+            number_of_results = request.data['number_of_data']
+            s=threading.Thread(target=scrape_google_maps,args=(content_type,number_of_results,latitude,longitude,query))
+            s.start()
+            print("scraper started")
 
-            response_data = {'status': 'Data saved successfully!'}
+        response_data = {'status': 'Data saved successfully!'}
 
         return Response(response_data)
 

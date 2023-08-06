@@ -4,12 +4,12 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys # Import the Keys class
 import undetected_chromedriver as uc
 import time
-from .models import Queries
+from .models import *
 
 
 
 
-def scrape_google_maps(content_type, number_of_results, latitude, longitude):
+def scrape_google_maps(content_type, number_of_results, latitude, longitude,query):
     # Latitude and Longitude for Vancouver
     #latitude = "49.2827"
     #longitude = "-123.1207"
@@ -32,13 +32,17 @@ def scrape_google_maps(content_type, number_of_results, latitude, longitude):
         actions.move_to_element(scrollable_element).send_keys(Keys.PAGE_DOWN).perform()
         time.sleep(1) # Allow some time for new cards to load
         cards = driver.find_elements(By.XPATH, "//a[@class='hfpxzc']")
+
         print(cards)
     print(len(cards))
-        
-    for c in cards[:number_of_results]:
+    names=driver.find_elements("xpath","//div[@class='qBF1Pd fontHeadlineSmall ']")
+    links=[]
+    for l in cards:
+        links.append(l.get_attribute('href'))
+    for c in links[:number_of_results]:
         # Process the cards as needed
-        a=c.get_attribute("href")
-        driver.get(a)
+
+        driver.get(c)
 
         time.sleep(5)
         name=driver.find_element(by="xpath",value='//h1[@class="DUwDvf lfPIob"]').text
@@ -47,6 +51,7 @@ def scrape_google_maps(content_type, number_of_results, latitude, longitude):
             desc=driver.find_element(by="xpath",value='//div[@class="PYvSYb "]').text
             print(desc)
         except:
+            desc=""
             pass
         location=driver.find_element(by="xpath",value='//div[@class="Io6YTe fontBodyMedium kR99db "]').text
         contacts = driver.find_elements(by="xpath", value='//div[@class="Io6YTe fontBodyMedium kR99db "]')
@@ -58,6 +63,15 @@ def scrape_google_maps(content_type, number_of_results, latitude, longitude):
         print(phone_numbers[5])
         print(phone_numbers[4])
         print(reviews)
+        obj=Google_data()
+        obj.name=name
+        obj.description=desc
+        obj.location=location
+        obj.phone=contact.text
+        obj.website=""
+        obj.reviews=reviews
+        obj.query_id=query
+
     # Don't forget to close the driver when you're done
     driver.quit()
 # Example usage
@@ -65,22 +79,22 @@ content_type = "restaurants" # Type of content to search for
 number_of_results = 10 # Number of results to return
 
 
-def get_pending_queries():
-    # Query your database to get pending queries
-    pending_queries = Queries.get_pending_queries()
-    return pending_queries
-
-def process_pending_queries():
-    pending_queries = get_pending_queries()
-    for query in pending_queries:
-        longitude = query['longitude']
-        latitude = query['latitude']
-        content_type = query['type']
-        number_of_results = 10  # You can set the desired number of results here
-        
-        # Call the scraper function with the extracted data
-        scrape_google_maps(content_type, number_of_results, latitude, longitude)
-
-# Run the process
-process_pending_queries()
+# def get_pending_queries():
+#     # Query your database to get pending queries
+#     pending_queries = Queries.get_pending_queries()
+#     return pending_queries
+#
+# def process_pending_queries():
+#     pending_queries = get_pending_queries()
+#     for query in pending_queries:
+#         longitude = query['longitude']
+#         latitude = query['latitude']
+#         content_type = query['type']
+#         number_of_results = 10  # You can set the desired number of results here
+#
+#         # Call the scraper function with the extracted data
+#         scrape_google_maps(content_type, number_of_results, latitude, longitude)
+#
+# # Run the process
+# process_pending_queries()
 
