@@ -11,13 +11,14 @@ class Queries(models.Model):
 
 class Google_data(models.Model):
     name = models.CharField(max_length=200)
+    rating = models.CharField(max_length=200)
+    direction = models.CharField(max_length=1000)
     description = models.TextField()
     location = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    website = models.URLField()
-    reviews = models.IntegerField()
-    query_id = models.ForeignKey(Queries, on_delete=models.CASCADE)
+    category = models.CharField(max_length=200)
+    status = models.CharField(max_length=200)
+    timing= models.CharField(max_length=200)
+    query = models.ForeignKey(Queries, on_delete=models.CASCADE)
 
 
 

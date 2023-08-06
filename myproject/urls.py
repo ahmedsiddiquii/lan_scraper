@@ -15,11 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from polls.views import get_data, save_data
+from polls.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('save_data/', save_data, name='save_data'),
-    path('get_data/', get_data, name='get_data'),
+    path('google_locations/get_data/', save_data, name='get_data'),
 
 ]

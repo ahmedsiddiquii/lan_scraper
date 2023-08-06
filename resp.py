@@ -1,12 +1,12 @@
 import requests
 
 def send_json_post_request():
-    url = 'http://127.0.0.1:8000/save_data/'
+    url = 'http://127.0.0.1:8000/google_locations/get_data/'
     data = {
         'longitude': '-123.1207',
         'latitude': '49.2827',
         'type': 'restaurant',
-        'number_of_data': 10
+        'number_of_data': 15
     }
 
     # Step 1: Make a POST request to save data
