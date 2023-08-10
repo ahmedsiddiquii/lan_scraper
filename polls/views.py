@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from .models import Queries, Google_data
 from .g_loc import *
 import threading
-
+from news import *
 from rest_framework import serializers
 from .models import Google_data
 
@@ -18,6 +18,25 @@ class GoogleDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Google_data
         fields = '__all__'
+@api_view(['GET', 'POST'])
+def get_newsdata(request):
+    if request.method=='POST':
+        country=request.POST['country']
+        if country:
+            data = scrape_api(country) 
+            response_data = {
+                'status': 'success',
+                'message': 'Data retrieved successfully',
+                'data': data
+            }
+            return JsonResponse(response_data, status=200)
+        else:
+            response_data = {
+                'status': 'error',
+                'message': 'Country parameter is missing or invalid'
+            }
+            return JsonResponse(response_data, status=400)
+
 
 @api_view(['GET', 'POST'])
 def save_data(request):
