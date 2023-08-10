@@ -16,36 +16,36 @@ soup = BeautifulSoup(html_content, "html.parser")
 
 
 data = []
-links = soup.select_one("c-wiz[jsrenderer='ARwRbe']")
-print(len(links))
-for anchor in links:
-    
-    if anchor:
-        link_length = len(anchor)
-        print(f"Length of link: {link_length}")
+articles=  soup.find_all('c-wiz', {'jsrenderer': 'ARwRbe'})
 
+for article in articles:
+    try:
+        image= article.find("figure").find("img").get("src")
+    except:
+        image = ""
+    try:
+        # Here's the translation of your XPath to BeautifulSoup
+        source_link_div = article.find('div', class_='XlKvRb')
+        source_link = "https://news.google.com"+source_link_div.find('a')['href']
+    except:
+        source_link = ""
 
-# img = soup.find_all("img", class_="Quavad")
+    try:
 
-# for images in img:
-#     image = images.get("src")
+        title = article.find('h4').text
+    except:
+        title = ""
 
-
-
-# title=soup.find_all("h4", class_="gPFEn")
-# for titles in title:
-#     tit=titles.text
-    
-#     data_article={
-#         "title":tit,
-#         "image": image,
-#         "Links": link,
-#     }
-    
-#     data.append(data_article)
-    
-#     import json
-#     json_data = json.dumps(data, indent=2)
-
-#     print(json_data)
-    
+    external_links_element=article.find_all("a")
+    external_headings_element = article.find_all("h4")
+    external_headings_element.pop(0)
+    external_links = {}
+    for i,el in enumerate(external_links_element):
+        try:
+            external_links[external_headings_element[i].text]="https://news.google.com"+el['href']
+        except:
+            external_links["Full Coverage"] = "https://news.google.com"+el['href']
+    data.append({"image":image,
+                 "source link":source_link,
+                 "title":title,
+                 "external links":external_links})
