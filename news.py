@@ -16,37 +16,36 @@ soup = BeautifulSoup(html_content, "html.parser")
 
 
 data = []
-links = soup.find_all("a", class_="WwrzSb")
+links = soup.select_one("c-wiz[jsrenderer='ARwRbe']")
+print(len(links))
 for anchor in links:
-    link = anchor.get("href") 
-
-
-img = soup.find_all("img", class_="Quavad")
-
-for images in img:
-    image = images.get("src")
-
-
-
-title=soup.find_all("h4", class_="gPFEn")
-for titles in title:
-    tit=titles.text
     
-    data_article={
-        "title":tit,
-        "image": image,
-        "Links": link,
-    }
+    if anchor:
+        link_length = len(anchor)
+        print(f"Length of link: {link_length}")
+
+
+# img = soup.find_all("img", class_="Quavad")
+
+# for images in img:
+#     image = images.get("src")
+
+
+
+# title=soup.find_all("h4", class_="gPFEn")
+# for titles in title:
+#     tit=titles.text
     
-    data.append(data_article)
+#     data_article={
+#         "title":tit,
+#         "image": image,
+#         "Links": link,
+#     }
     
-    import json
-    json_data = json.dumps(data, indent=2)
-
-    print(json_data)
+#     data.append(data_article)
     
+#     import json
+#     json_data = json.dumps(data, indent=2)
 
-
-
-
-
+#     print(json_data)
+    
