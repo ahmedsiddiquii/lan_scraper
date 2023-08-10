@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from .models import Queries, Google_data
 from .g_loc import *
 import threading
-from news import *
+from .news import scrape_api
+
 from rest_framework import serializers
 from .models import Google_data
 
@@ -18,6 +19,7 @@ class GoogleDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Google_data
         fields = '__all__'
+
 @api_view(['GET', 'POST'])
 def get_newsdata(request):
     if request.method=='POST':

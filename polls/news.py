@@ -64,8 +64,9 @@ def scrape_api(country):
 
 
     scraped_data = []
+
     for url in url_list:
         urls = scraper("https://news.google.com/topics/"+url+"?hl=en-"+country+"&gl="+country+"&ceid="+country+"%3Aen")
         scraped_data.append(urls)
-        
+    print(scraped_data)
     return scraped_data
