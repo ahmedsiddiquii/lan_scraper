@@ -22,8 +22,9 @@ class GoogleDataSerializer(serializers.ModelSerializer):
 
 @api_view(['GET', 'POST'])
 def get_newsdata(request):
+    print(request.method)
     if request.method=='POST':
-        country=request.POST['country']
+        country=request.data.get('country')
         if country:
             data = scrape_api(country) 
             response_data = {
