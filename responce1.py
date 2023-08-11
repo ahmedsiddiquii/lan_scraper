@@ -1,9 +1,9 @@
 import requests
 
-def send_json_post_request(country):
-    url = 'http://127.0.0.1:8000/api/get_newsdata/'
+def send_json_post_request():
+    url = 'http://127.0.0.1:8000/get_newsdata/'
     data = {
-        'country': country
+        'country': "PK"
     }
 
     # Step 1: Make a POST request to save data
@@ -18,4 +18,5 @@ def send_json_post_request(country):
 
 
 if __name__ == "__main__":
+    
     send_json_post_request()
